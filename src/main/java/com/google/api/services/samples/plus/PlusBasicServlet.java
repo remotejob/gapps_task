@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Sample Google+ servlet that does a search on public activities.
@@ -48,71 +49,60 @@ public class PlusBasicServlet extends HttpServlet {
 
     String term = req.getParameter("term");
 
-    log.info(term);
+    HttpSession session = req.getSession();
+
+    String clid = (String) session.getAttribute("clid");
+
 
     if (term.length() > 2) {
-
 
       List<String> filenamesout = new ArrayList<String>();
 
       JsonFactory factory = new JacksonFactory();
-      
-//      Writer out = null;
+
       StringWriter sw = new StringWriter();
       JsonGenerator jGenerator = factory.createJsonGenerator(sw);
-      
-      
-      //
-      // jGenerator.writeStartArray();
-      // jGenerator.writeStartObject();
-      // jGenerator.writeFieldName("name");
-      // jGenerator.writeString(term);
-      // jGenerator.writeEndObject();
-      // jGenerator.writeEndArray();
-      //
-      // jGenerator.close();
-      //
-      // log.info(sw.toString());
-      
+
       MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
-      List<String> filenames = (List<String>) memcache.get("101167552374945942416");
-//      
-//      JsonGenerator jGenerator = JacksonFactory.createJsonGenerator(out, JsonString.);
-      
+      if (memcache.contains(clid)) {
+
+        log.info("memcache exist");
+
+     
+      List<String> filenames = (List<String>) memcache.get(clid);
 
       for (String filename : filenames) {
 
         if (filename.toLowerCase().contains(term.toLowerCase())) {
 
-          log.info(filename);
-          
           filenamesout.add(filename);
-
 
         }
 
       }
-      
+
+      } else {
+        
+        log.warning("memchache not exist "+clid);
+      }
       jGenerator.writeStartArray();
       if (filenamesout.size() > 0) {
         for (String filename : filenamesout) {
-//        jGenerator.writeStartObject();
-//        jGenerator.writeFieldName("name");
-        jGenerator.writeString(filename );
-//        jGenerator.writeEndObject();
-        
+
+          jGenerator.writeString(filename);
+
         }
-                
+
       }
       jGenerator.writeEndArray();
       jGenerator.close();
       resp.setContentType("application/json");
       resp.setStatus(200);
       Writer writer = resp.getWriter();
-          
+
       writer.write(sw.toString());
-            
+
       writer.close();
 
     } // length() > 2

@@ -38,6 +38,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 // import com.google.api.client.util.store.FileDataStoreFactory;
 
@@ -52,30 +53,14 @@ public class PlusSampleServlet extends HttpServlet {
 
   private static final String APPLICATION_NAME = "Drive API Java Quickstart";
 
-  // private static final JacksonFactory JSON_FACTORY =
-  // JacksonFactory.getDefaultInstance();
-
-
-
-  /** Directory to store user credentials for this application. */
-  // private static final java.io.File DATA_STORE_DIR = new java.io.File(
-  // System.getProperty("user.home"), ".credentials/drive-java-quickstart.json");
-
-
-
-  /** Global instance of the {@link FileDataStoreFactory}. */
-  // private static FileDataStoreFactory DATA_STORE_FACTORY;
-
-
-
-  /** Global instance of the HTTP transport. */
-  // private static HttpTransport HTTP_TRANSPORT;
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws IOException, ServletException {
 
     final Logger log = Logger.getLogger(PlusSampleServlet.class.getName());
+    
+    HttpSession session=req.getSession();
 
     Cache cache;
     try {
@@ -86,10 +71,6 @@ public class PlusSampleServlet extends HttpServlet {
 
     }
 
-    // Check if we have stored credentials using the Authorization Flow.
-    // Note that we only check if there are stored credentials, but not if they are still valid.
-    // The user may have revoked authorization, in which case we would need to go through the
-    // authorization flow again, which this implementation does not handle.
     GoogleAuthorizationCodeFlow authFlow = Utils.initializeFlow();
 
     log.info(authFlow.getClientId());
@@ -107,15 +88,43 @@ public class PlusSampleServlet extends HttpServlet {
     Person profile = plus.people().get("me").execute();
 
     String clid = profile.getId();
-
+    
+    session.setAttribute("clid", clid);
+    
     Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
         .setApplicationName(APPLICATION_NAME).build();
 
+//    List<File> result = new ArrayList<File>();
+//    Files.List request = service.files().list();
+    
+//    do {
+//      try {
+//        FileList files = request.execute();
+//
+//        result.addAll(files.getNex);
+//        request.setPageToken(files.getNextPageToken());
+//      } catch (IOException e) {
+//        System.out.println("An error occurred: " + e);
+//        request.setPageToken(null);
+//      }
+//    } while (request.getPageToken() != null &&
+//             request.getPageToken().length() > 0);
+//
+//    return result;
+//  }
+//    
+    
     FileList result = service.files().list().execute();
 
     List<com.google.api.services.drive.model.File> files = result.getFiles();
 
+//    result.setNextPageToken(files.g)
+    
+    
     List<String> filenames = new ArrayList<String>();
+    
+    
+    
 
     for (com.google.api.services.drive.model.File file : files) {
       // respWriter.println("<p>"+file.getName()+"</p>");
@@ -123,14 +132,19 @@ public class PlusSampleServlet extends HttpServlet {
 
     }
 
+    
+    
+    
+    
     MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
     // put a new item in cache associated with string "headlines"
     if (!memcache.contains(clid)) {
-
+      
+      log.info("memcache ! not exist");
       memcache.put(clid, filenames);
-
     }
+
 
     PrintWriter respWriter = resp.getWriter();
     resp.setStatus(200);
@@ -152,20 +166,16 @@ public class PlusSampleServlet extends HttpServlet {
     respWriter.println("<div class=\"well\">");
 
     respWriter.println("<img src='" + profile.getImage().getUrl() + "'>");
-    respWriter.println("Uniq Client ID can be used as Id for DB -> " + profile.getId());
+    respWriter.println("Uniq Client ID can be used as Id for DB -> " + profile.getId()+"\n we will keep it in session");
     respWriter.println("</div>");
 
-    respWriter.println("Search from " + files.size());
+    respWriter.println("Search from " + files.size()+" files (keeped in memcache for speed improvement)");
 
     respWriter.println(
         "<div class=\"search-container\"><div class=\"ui-widget\"><input type=\"text\" id=\"search\" name=\"search\" class=\"search\" /></div>");
 
-    // for (com.google.api.services.drive.model.File file : files) {
-    // respWriter.println("<p>"+file.getName()+"</p>");
-    // }
     respWriter.println("</div>");
     respWriter.close();
 
-    // respWriter.println("<a href='" + files.size() + "'>" + "</a>");
   }
 }

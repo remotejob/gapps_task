@@ -25,7 +25,7 @@ public class Start extends HttpServlet {
     out.print("<div class=\"well\">");
     out.print("<h1>WELCOME TO GAPPS AGGREMENT PAGE</h1>");
     out.print("<h2>Task related to eventual job aggrement</h2>");
-    out.print("<a href=\"/\" class=\"btn btn-default\">I AGREE</a>");
+    out.print("<a href=\"/\" class=\"btn btn-primary btn-lg\">I AGREE</a>");
     out.print("</div>");
     out.print("</div>");
 

@@ -41,7 +41,7 @@ class Utils {
   private static final List<String> SCOPES =Arrays.asList(DriveScopes.DRIVE_METADATA_READONLY,PlusScopes.PLUS_ME);
   public static final UrlFetchTransport HTTP_TRANSPORT = new UrlFetchTransport();
   public static final JacksonFactory JSON_FACTORY = new JacksonFactory();
-  public static final String MAIN_SERVLET_PATH = "/Suyash";
+  public static final String MAIN_SERVLET_PATH = "/Start";
   public static final String AUTH_CALLBACK_SERVLET_PATH = "/oauth2callback";
 
   private static GoogleClientSecrets getClientSecrets() throws IOException {
