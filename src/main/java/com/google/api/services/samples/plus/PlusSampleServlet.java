@@ -17,7 +17,7 @@ package com.google.api.services.samples.plus;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.File;
 import com.google.api.services.plus.Plus;
 import com.google.api.services.plus.model.Person;
 import com.google.appengine.api.memcache.MemcacheService;
@@ -94,48 +94,28 @@ public class PlusSampleServlet extends HttpServlet {
     Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
         .setApplicationName(APPLICATION_NAME).build();
 
-//    List<File> result = new ArrayList<File>();
-//    Files.List request = service.files().list();
+    GetAllFiles getallfile = new GetAllFiles();
     
-//    do {
-//      try {
-//        FileList files = request.execute();
-//
-//        result.addAll(files.getNex);
-//        request.setPageToken(files.getNextPageToken());
-//      } catch (IOException e) {
-//        System.out.println("An error occurred: " + e);
-//        request.setPageToken(null);
-//      }
-//    } while (request.getPageToken() != null &&
-//             request.getPageToken().length() > 0);
-//
-//    return result;
-//  }
+    List<File> allfiles = getallfile.retrieveAllFiles(service);
+    
+    log.info("all file "+allfiles.size());
 //    
-    
-    FileList result = service.files().list().execute();
-
-    List<com.google.api.services.drive.model.File> files = result.getFiles();
+//    FileList result = service.files().list().execute();
+//
+//    List<com.google.api.services.drive.model.File> files = result.getFiles();
 
 //    result.setNextPageToken(files.g)
     
     
     List<String> filenames = new ArrayList<String>();
-    
-    
-    
+        
 
-    for (com.google.api.services.drive.model.File file : files) {
+    for (com.google.api.services.drive.model.File file : allfiles) {
       // respWriter.println("<p>"+file.getName()+"</p>");
       filenames.add(file.getName());
 
     }
-
-    
-    
-    
-    
+        
     MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
     // put a new item in cache associated with string "headlines"
@@ -169,7 +149,7 @@ public class PlusSampleServlet extends HttpServlet {
     respWriter.println("Uniq Client ID can be used as Id for DB -> " + profile.getId()+"\n we will keep it in session");
     respWriter.println("</div>");
 
-    respWriter.println("Search from " + files.size()+" files (keeped in memcache for speed improvement)");
+    respWriter.println("Search from " + allfiles.size()+" files (keeped in memcache for speed improvement)");
 
     respWriter.println(
         "<div class=\"search-container\"><div class=\"ui-widget\"><input type=\"text\" id=\"search\" name=\"search\" class=\"search\" /></div>");
