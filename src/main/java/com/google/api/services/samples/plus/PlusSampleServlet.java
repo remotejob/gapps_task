@@ -53,7 +53,7 @@ public class PlusSampleServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1;
 
-  private static final String APPLICATION_NAME = "Drive API Java Quickstart";
+  private static final String APPLICATION_NAME = "Drive API Java Gapps Task";
 
 
   @Override
@@ -150,6 +150,7 @@ public class PlusSampleServlet extends HttpServlet {
     respWriter.println("</head>");
 
     respWriter.println("<div class=\"container\">");
+    respWriter.println("<img src=\"/img/blog-gcp-logo.png\" alt=\"Appengine\" style=\"height:20%;\">");
     respWriter.println("<div class=\"well\">");
 
     respWriter.println("<img src='" + profile.getImage().getUrl() + "'>");
@@ -163,7 +164,10 @@ public class PlusSampleServlet extends HttpServlet {
 
     respWriter.println(
         "<div class=\"search-container\"><div class=\"ui-widget\"><input type=\"text\" size=\"90%\" id=\"search\" name=\"search\" class=\"search\" /> &nbsp;&nbsp;<a class=\"btn btn-primary btn-lg\" onclick=\"getPreviewPageAsync('/previewfile');\" role=\"button\">Preview file</a></div>");
-
+    
+    respWriter.println("<h4>fiel ID <span id = \"id\" class=\"label label-danger\">id</span></h4>");
+    respWriter.println("<h4>NAME<span id = \"name\" class=\"label label-warning\">name</span></h4>");  
+    
     respWriter.println("</div>");
     respWriter.println("</div>");
     respWriter.close();

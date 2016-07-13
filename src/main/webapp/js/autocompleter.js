@@ -32,15 +32,21 @@ function getPreviewPageAsync(url) {
 	
 	xhr.onload = function(){
 		if (xhr.status === 200) {
-		        console.log()
-		    }
+		        var myFile = JSON.parse(xhr.responseText);
+		        
+		        document.getElementById("id").innerHTML = myFile.id;
+		        document.getElementById("name").innerHTML = myFile.name;
+		        
+		    
 		}
 	
-	
+	}
 	xhr.onerror = function() {
-	    displayError("Unable to load RSS");
+	    
+	    console.log("Something wrong!! in getPreviewPageAsync");
 	}
 	
 	xhr.send();
+	
 	
 };
