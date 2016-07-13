@@ -35,9 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Sample Google+ servlet that does a search on public activities.
+ * Sample Google  servlet .
  *
- * @author Nick Miceli
+ * @author Alex Mazurov
  */
 public class PlusBasicServlet extends HttpServlet {
 
@@ -112,9 +112,6 @@ public class PlusBasicServlet extends HttpServlet {
       writer.write(sw.toString());
 
       writer.close();
-
-    
-
 
   }
 

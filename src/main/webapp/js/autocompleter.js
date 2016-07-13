@@ -20,10 +20,16 @@ $(document).ready(function() {
 
 function getPreviewPageAsync(url) {
 	
-	var xhr = new XMLHttpRequest();
+	var dfilename = document.getElementById("search").value;
 	
+	console.log(dfilename)
+	
+	var xhr = new XMLHttpRequest();
+		
 	xhr.open('GET', url);
-
+	
+	xhr.setRequestHeader('X-Dfilename', dfilename);
+	
 	xhr.onload = function(){
 		if (xhr.status === 200) {
 		        console.log()

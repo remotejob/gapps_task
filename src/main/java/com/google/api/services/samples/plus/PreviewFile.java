@@ -14,8 +14,18 @@
 
 package com.google.api.services.samples.plus;
 
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.JsonGenerator;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.repackaged.org.codehaus.jackson.map.ObjectMapper;
+
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -25,14 +35,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * @author juno@google.com (Your Name Here)
+ * @author Alex Mazurov
  *
  */
 public class PreviewFile extends HttpServlet {
 
-  /**
-   * 
-   */
   private static final long serialVersionUID = -5966192457639271696L;
 
   @Override
@@ -43,24 +50,59 @@ public class PreviewFile extends HttpServlet {
     HttpSession session = req.getSession();
 
     String clid = (String) session.getAttribute("clid");
-    
-    resp.setContentType("text/html");
+
+    String dfilename = req.getHeader("X-Dfilename");
+
+    JsonFactory factory = new JacksonFactory();
+
+    MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+
+    String allfilesjson = (String) memcache.get(clid);
+
+
+    ObjectMapper mapper = new ObjectMapper();
+
+
+    List<DfileObj> filesObj =
+        Arrays.asList(mapper.readValue(allfilesjson.toString(), DfileObj[].class));
+
+
+    DfileObj dfileObjOut = new DfileObj();
+
+    for (DfileObj dfileObj : filesObj) {
+
+      if (dfileObj.getName().equals(dfilename)) {
+
+        dfileObjOut.setId(dfileObj.getId());
+        dfileObjOut.setName(dfileObj.getName());
+
+
+      }
+
+
+    }
+
+    StringWriter sw = new StringWriter();
+    JsonGenerator jGenerator = factory.createJsonGenerator(sw);
+
+    jGenerator.writeStartObject();
+
+    jGenerator.writeFieldName("id");
+    jGenerator.writeString(dfileObjOut.getId());
+    jGenerator.writeFieldName("name");
+    jGenerator.writeString(dfileObjOut.getName());
+
+    jGenerator.writeEndObject();
+    jGenerator.close();
+    resp.setContentType("application/json");
     resp.setStatus(200);
     Writer writer = resp.getWriter();
- 
-    writer.write("<link href='http://fonts.googleapis.com/css?family=Finger+Paint' rel='stylesheet' type='text/css'>");
-    writer.write(
-        "<head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css\" integrity=\"sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7\" crossorigin=\"anonymous\">");
-    writer.write("</head>");
 
-    writer.write("<div class=\"container\">");
-    writer.write("<div class=\"well\">");
-    
-    writer.write("Cliid ->"+clid );
-    
-    writer.write("</div>");
-    writer.write("</div>");
+    writer.write(sw.toString());
+
     writer.close();
+
+
 
   }
 

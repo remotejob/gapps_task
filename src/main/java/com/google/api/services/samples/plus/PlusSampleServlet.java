@@ -100,62 +100,42 @@ public class PlusSampleServlet extends HttpServlet {
 
     List<File> allfiles = getallfile.retrieveAllFiles(service);
 
-//    List<DfileObj> filenames = new ArrayList<DfileObj>();
-
     JsonFactory factory = new JacksonFactory();
 
     StringWriter sw = new StringWriter();
-    
+
     JsonGenerator jGenerator = factory.createJsonGenerator(sw);
-    
+
     jGenerator.writeStartArray();
 
     for (com.google.api.services.drive.model.File file : allfiles) {
-      
+
       jGenerator.writeStartObject();
       jGenerator.writeFieldName("id");
       jGenerator.writeString(file.getId());
       jGenerator.writeFieldName("name");
       jGenerator.writeString(file.getName());
       jGenerator.writeEndObject();
-      
-//      DfileObj dfileObj = new DfileObj();
-//      
-//      dfileObj.setId(file.getId());
-//      dfileObj.setName(file.getName());
-//      filenames.add(dfileObj);
 
     }
-    
-  jGenerator.writeEndArray();
-  jGenerator.close();
+
+    jGenerator.writeEndArray();
+    jGenerator.close();
 
     MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
-//    if (!memcache.contains(clid)) {
-//
-//      log.info("memcache ! not exist");
-//      memcache.put(clid, filenames);
-//    }
 
-
-//    JsonGenerator jGenerator = factory.createJsonGenerator(sw);
-//    
-//    jGenerator.serialize(filenames);
-    
-    
-    
-       
     if (!memcache.contains(clid)) {
 
       log.info("memcache ! not exist");
       memcache.put(clid, sw.toString());
-    }  
+    }
 
     PrintWriter respWriter = resp.getWriter();
     resp.setStatus(200);
     resp.setContentType("text/html");
-    respWriter.println("<link href='http://fonts.googleapis.com/css?family=Finger+Paint' rel='stylesheet' type='text/css'>");
+    respWriter.println(
+        "<link href='http://fonts.googleapis.com/css?family=Finger+Paint' rel='stylesheet' type='text/css'>");
     respWriter.println(
         "<head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css\" integrity=\"sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7\" crossorigin=\"anonymous\">");
     respWriter.println("<script src=\"//code.jquery.com/jquery-1.10.2.js\"></script>");
@@ -173,12 +153,13 @@ public class PlusSampleServlet extends HttpServlet {
     respWriter.println("<div class=\"well\">");
 
     respWriter.println("<img src='" + profile.getImage().getUrl() + "'>");
-    respWriter.println("Uniq Client ID (from +PLUS api) can be used as Id for DB <div class='redtitle'>" + profile.getId()
-        + "</div> we will keep it in <div class='redtitle'>session</div>");
+    respWriter
+        .println("Uniq Client ID (from +PLUS api) can be used as Id for DB <div class='redtitle'>"
+            + profile.getId() + "</div> we will keep it in <div class='redtitle'>session</div>");
     respWriter.println("</div>");
     respWriter.println("<div class=\"jumbotron\" >");
-    respWriter.println(
-        "Search from " + allfiles.size() + " files (keeped in <div class='redtitle'>memcache</div> for speed improvement)");
+    respWriter.println("Search from " + allfiles.size()
+        + " files (keeped in <div class='redtitle'>memcache</div> for speed improvement)");
 
     respWriter.println(
         "<div class=\"search-container\"><div class=\"ui-widget\"><input type=\"text\" size=\"90%\" id=\"search\" name=\"search\" class=\"search\" /> &nbsp;&nbsp;<a class=\"btn btn-primary btn-lg\" onclick=\"getPreviewPageAsync('/previewfile');\" role=\"button\">Preview file</a></div>");
