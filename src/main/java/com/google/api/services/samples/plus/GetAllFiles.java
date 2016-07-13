@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class GetAllFiles {
   
-  public static List<File> retrieveAllFiles(Drive service) throws IOException {
+  public  List<File> retrieveAllFiles(Drive service) throws IOException {
     List<File> result = new ArrayList<File>();
     Files.List request = service.files().list();
 

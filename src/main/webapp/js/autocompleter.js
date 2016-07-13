@@ -1,6 +1,6 @@
 $(document).ready(function() {
         $(function() {
-                $("#search").autocomplete({     
+                $("#search").autocomplete({ minLength: 3,    
                 source : function(request, response) {
                 $.ajax({
                         url : "searchcontroller",
@@ -9,8 +9,7 @@ $(document).ready(function() {
                                 term : request.term
                         },
                         dataType : "json",
-                        success : function(data) {
-                        	console.log(data)
+                        success : function(data) {                        	
                                 response(data);
                         }
                 });
@@ -18,3 +17,24 @@ $(document).ready(function() {
 });
 });
 });
+
+function getPreviewPageAsync(url) {
+	
+	var xhr = new XMLHttpRequest();
+	
+	xhr.open('GET', url);
+
+	xhr.onload = function(){
+		if (xhr.status === 200) {
+		        console.log()
+		    }
+		}
+	
+	
+	xhr.onerror = function() {
+	    displayError("Unable to load RSS");
+	}
+	
+	xhr.send();
+	
+};

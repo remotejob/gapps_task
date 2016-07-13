@@ -16,6 +16,9 @@ package com.google.api.services.samples.plus;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.JsonGenerator;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.plus.Plus;
@@ -25,7 +28,7 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -40,12 +43,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-// import com.google.api.client.util.store.FileDataStoreFactory;
 
 /**
  * Sample Google+ servlet that loads user credentials and then shows their profile link.
  *
- * @author Nick Miceli
+ * @author Alex Mazurov
  */
 public class PlusSampleServlet extends HttpServlet {
 
@@ -59,8 +61,8 @@ public class PlusSampleServlet extends HttpServlet {
       throws IOException, ServletException {
 
     final Logger log = Logger.getLogger(PlusSampleServlet.class.getName());
-    
-    HttpSession session=req.getSession();
+
+    HttpSession session = req.getSession();
 
     Cache cache;
     try {
@@ -88,48 +90,72 @@ public class PlusSampleServlet extends HttpServlet {
     Person profile = plus.people().get("me").execute();
 
     String clid = profile.getId();
-    
+
     session.setAttribute("clid", clid);
-    
+
     Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
         .setApplicationName(APPLICATION_NAME).build();
 
     GetAllFiles getallfile = new GetAllFiles();
-    
-    List<File> allfiles = getallfile.retrieveAllFiles(service);
-    
-    log.info("all file "+allfiles.size());
-//    
-//    FileList result = service.files().list().execute();
-//
-//    List<com.google.api.services.drive.model.File> files = result.getFiles();
 
-//    result.setNextPageToken(files.g)
+    List<File> allfiles = getallfile.retrieveAllFiles(service);
+
+//    List<DfileObj> filenames = new ArrayList<DfileObj>();
+
+    JsonFactory factory = new JacksonFactory();
+
+    StringWriter sw = new StringWriter();
     
+    JsonGenerator jGenerator = factory.createJsonGenerator(sw);
     
-    List<String> filenames = new ArrayList<String>();
-        
+    jGenerator.writeStartArray();
 
     for (com.google.api.services.drive.model.File file : allfiles) {
-      // respWriter.println("<p>"+file.getName()+"</p>");
-      filenames.add(file.getName());
+      
+      jGenerator.writeStartObject();
+      jGenerator.writeFieldName("id");
+      jGenerator.writeString(file.getId());
+      jGenerator.writeFieldName("name");
+      jGenerator.writeString(file.getName());
+      jGenerator.writeEndObject();
+      
+//      DfileObj dfileObj = new DfileObj();
+//      
+//      dfileObj.setId(file.getId());
+//      dfileObj.setName(file.getName());
+//      filenames.add(dfileObj);
 
     }
-        
+    
+  jGenerator.writeEndArray();
+  jGenerator.close();
+
     MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
-    // put a new item in cache associated with string "headlines"
-    if (!memcache.contains(clid)) {
-      
-      log.info("memcache ! not exist");
-      memcache.put(clid, filenames);
-    }
+//    if (!memcache.contains(clid)) {
+//
+//      log.info("memcache ! not exist");
+//      memcache.put(clid, filenames);
+//    }
 
+
+//    JsonGenerator jGenerator = factory.createJsonGenerator(sw);
+//    
+//    jGenerator.serialize(filenames);
+    
+    
+    
+       
+    if (!memcache.contains(clid)) {
+
+      log.info("memcache ! not exist");
+      memcache.put(clid, sw.toString());
+    }  
 
     PrintWriter respWriter = resp.getWriter();
     resp.setStatus(200);
     resp.setContentType("text/html");
-
+    respWriter.println("<link href='http://fonts.googleapis.com/css?family=Finger+Paint' rel='stylesheet' type='text/css'>");
     respWriter.println(
         "<head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css\" integrity=\"sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7\" crossorigin=\"anonymous\">");
     respWriter.println("<script src=\"//code.jquery.com/jquery-1.10.2.js\"></script>");
@@ -140,20 +166,24 @@ public class PlusSampleServlet extends HttpServlet {
     respWriter.println(
         "<link rel=\"stylesheet\" href=\"//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css\"> ");
 
+    respWriter.println("<link rel=\"stylesheet\" href=\"/styles/main.css\" />");
     respWriter.println("</head>");
 
     respWriter.println("<div class=\"container\">");
     respWriter.println("<div class=\"well\">");
 
     respWriter.println("<img src='" + profile.getImage().getUrl() + "'>");
-    respWriter.println("Uniq Client ID can be used as Id for DB -> " + profile.getId()+"\n we will keep it in session");
+    respWriter.println("Uniq Client ID (from +PLUS api) can be used as Id for DB <div class='redtitle'>" + profile.getId()
+        + "</div> we will keep it in <div class='redtitle'>session</div>");
     respWriter.println("</div>");
-
-    respWriter.println("Search from " + allfiles.size()+" files (keeped in memcache for speed improvement)");
+    respWriter.println("<div class=\"jumbotron\" >");
+    respWriter.println(
+        "Search from " + allfiles.size() + " files (keeped in <div class='redtitle'>memcache</div> for speed improvement)");
 
     respWriter.println(
-        "<div class=\"search-container\"><div class=\"ui-widget\"><input type=\"text\" id=\"search\" name=\"search\" class=\"search\" /></div>");
+        "<div class=\"search-container\"><div class=\"ui-widget\"><input type=\"text\" size=\"90%\" id=\"search\" name=\"search\" class=\"search\" /> &nbsp;&nbsp;<a class=\"btn btn-primary btn-lg\" onclick=\"getPreviewPageAsync('/previewfile');\" role=\"button\">Preview file</a></div>");
 
+    respWriter.println("</div>");
     respWriter.println("</div>");
     respWriter.close();
 

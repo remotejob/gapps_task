@@ -1,0 +1,23 @@
+body {
+        
+   background: url('/img/backgroundimg2.jpg') no-repeat center center fixed;
+   background-size: cover;
+   height: 100%;
+        
+  	font-family: 'Finger Paint', cursive  !important;
+/*  	color:#ffd9d9;
+  	color:#000000; */
+  	text-shadow: 1px 1px 1px #aaa;
+  	margin: 10px;
+ /*	font-size: 170%;*/
+ 	/*background-color: white;*/
+}
+
+.redtitle {
+	color: red;
+	font-size: 150%;
+	display: inline-block;
+/*	background: #ccc;
+	vertical-align: top;
+	*/
+}

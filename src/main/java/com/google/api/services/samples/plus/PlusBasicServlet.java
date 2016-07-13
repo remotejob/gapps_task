@@ -16,6 +16,8 @@ package com.google.api.services.samples.plus;
 
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonGenerator;
+import com.google.api.client.json.JsonParser;
+import com.google.api.client.json.JsonToken;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
@@ -44,7 +46,7 @@ public class PlusBasicServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    // HttpTransport httpTransport = new UrlFetchTransport();
+    
     final Logger log = Logger.getLogger(PlusBasicServlet.class.getName());
 
     String term = req.getParameter("term");
@@ -53,39 +55,45 @@ public class PlusBasicServlet extends HttpServlet {
 
     String clid = (String) session.getAttribute("clid");
 
-
-    if (term.length() > 2) {
-
       List<String> filenamesout = new ArrayList<String>();
 
       JsonFactory factory = new JacksonFactory();
 
+      MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+      
+      String allfilesjson = (String) memcache.get(clid);
+
+      
+      JsonParser jParser=factory.createJsonParser(allfilesjson);
+      
+      while (jParser.nextToken() != JsonToken.END_ARRAY) {
+        
+        String fieldname = jParser.getCurrentName();
+        
+        if ("name".equals(fieldname)) {          
+
+          jParser.nextToken(); 
+          
+          String filename = jParser.getText();
+          
+          if (filename.toLowerCase().contains(term.toLowerCase())) {
+
+            filenamesout.add(filename);
+
+          }
+                  
+          
+        }
+                
+        
+      }
+      
+      jParser.close();
+            
+      
       StringWriter sw = new StringWriter();
       JsonGenerator jGenerator = factory.createJsonGenerator(sw);
-
-      MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-
-      if (memcache.contains(clid)) {
-
-        log.info("memcache exist");
-
-     
-      List<String> filenames = (List<String>) memcache.get(clid);
-
-      for (String filename : filenames) {
-
-        if (filename.toLowerCase().contains(term.toLowerCase())) {
-
-          filenamesout.add(filename);
-
-        }
-
-      }
-
-      } else {
-        
-        log.warning("memchache not exist "+clid);
-      }
+      
       jGenerator.writeStartArray();
       if (filenamesout.size() > 0) {
         for (String filename : filenamesout) {
@@ -105,7 +113,7 @@ public class PlusBasicServlet extends HttpServlet {
 
       writer.close();
 
-    } // length() > 2
+    
 
 
   }
