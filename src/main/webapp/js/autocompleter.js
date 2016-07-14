@@ -37,6 +37,7 @@ function getPreviewPageAsync(url) {
 		        document.getElementById("id").innerHTML = myFile.id;
 		        document.getElementById("name").innerHTML = myFile.name;
 		        document.getElementById("mimetype").innerHTML = myFile.mimetype;
+		        document.getElementById("clidimg").innerHTML ="Hei!&nbsp; <img src='" + myFile.clidimg + "'> you have total "+myFile.allfilesquant+" files and yours ID <div class='redtitle'>"+myFile.clid+"<div>"; 
 		        
 		        if (myFile.mimetype ==="image/jpeg") {
 		        	

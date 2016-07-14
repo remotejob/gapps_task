@@ -61,10 +61,11 @@ public class PlusSampleServlet extends HttpServlet {
     MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
     String clid;
+    String clidimg;
     Credential credential = null;
     Person profile = null;
     List<File> allfiles = null;
-    
+
     GoogleAuthorizationCodeFlow authFlow = Utils.initializeFlow();
 
     log.info(authFlow.getClientId());
@@ -75,24 +76,25 @@ public class PlusSampleServlet extends HttpServlet {
           authFlow.newAuthorizationUrl().setRedirectUri(Utils.getRedirectUri(req)).build());
       return;
     }
-    
 
     if (null == session.getAttribute("clid")) {
 
       log.info("clid null");
-
-      // log.info("credential",credential.);
       // If we do have stored credentials, build the Plus object using them.
       Plus plus = new Plus.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
           .setApplicationName(APPLICATION_NAME).build();
       profile = plus.people().get("me").execute();
 
       clid = profile.getId();
+      clidimg = profile.getImage().getUrl();
+
+      log.info(profile.toPrettyString());
 
       session.setAttribute("clid", clid);
+      session.setAttribute("clidimg", clidimg);
 
       if (!memcache.contains(clid)) {
-        
+
         Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
             .setApplicationName(APPLICATION_NAME).build();
 
@@ -127,13 +129,11 @@ public class PlusSampleServlet extends HttpServlet {
         log.info("memcache ! not exist");
         memcache.put(clid, sw.toString());
       }
-    
-    
+
+
     } else {
 
       clid = (String) session.getAttribute("clid");
-
-
     }
 
 
@@ -159,11 +159,9 @@ public class PlusSampleServlet extends HttpServlet {
     respWriter
         .println("<img src=\"/img/blog-gcp-logo.png\" alt=\"Appengine\" style=\"height:20%;\">");
     respWriter.println("<div class=\"well\">");
+    respWriter.println(
+        "<div id ='clidimg'><img src=\"/img/opengapps.png\" alt=\"Appengine\" style=\"height:20%;\">GAPPS TASK ADS quick search files from Google Drive</div>");
 
-//    respWriter.println("<img src='" + profile.getImage().getUrl() + "'>");
-//    respWriter
-//        .println("Uniq Client ID (from +PLUS api) can be used as Id for DB <div class='redtitle'>"
-//            + profile.getId() + "</div> we will keep it in <div class='redtitle'>session</div>");
     respWriter.println("</div>");
     respWriter.println("<div class=\"jumbotron\" >");
     respWriter.println("Search from "

@@ -50,6 +50,8 @@ public class PreviewFile extends HttpServlet {
     HttpSession session = req.getSession();
 
     String clid = (String) session.getAttribute("clid");
+    String clidimg = (String) session.getAttribute("clidimg");
+    
 
     String dfilename = req.getHeader("X-Dfilename");
 
@@ -66,6 +68,9 @@ public class PreviewFile extends HttpServlet {
     List<DfileObj> filesObj =
         Arrays.asList(mapper.readValue(allfilesjson.toString(), DfileObj[].class));
 
+    String allfilesquant =""+filesObj.size();
+    
+    
     DfileObj dfileObjOut = new DfileObj();
 
     for (DfileObj dfileObj : filesObj) {
@@ -85,6 +90,12 @@ public class PreviewFile extends HttpServlet {
 
     jGenerator.writeStartObject();
 
+    jGenerator.writeFieldName("clid");
+    jGenerator.writeString(clid);
+    jGenerator.writeFieldName("clidimg");
+    jGenerator.writeString(clidimg);
+    jGenerator.writeFieldName("allfilesquant");
+    jGenerator.writeString(allfilesquant);
     jGenerator.writeFieldName("id");
     jGenerator.writeString(dfileObjOut.getId());
     jGenerator.writeFieldName("name");
