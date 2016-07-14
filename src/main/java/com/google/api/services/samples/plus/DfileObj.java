@@ -23,6 +23,7 @@ package com.google.api.services.samples.plus;
 public class DfileObj {
   private String id;
   private String name;
+  private String mimetype;
   /**
    * @return the id
    */
@@ -46,6 +47,18 @@ public class DfileObj {
    */
   public void setName(String name) {
     this.name = name;
+  }
+  /**
+   * @return the mimetype
+   */
+  public String getMimetype() {
+    return mimetype;
+  }
+  /**
+   * @param mimetype the mimetype to set
+   */
+  public void setMimetype(String mimetype) {
+    this.mimetype = mimetype;
   }
   
 

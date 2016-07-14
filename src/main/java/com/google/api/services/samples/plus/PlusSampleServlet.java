@@ -99,7 +99,17 @@ public class PlusSampleServlet extends HttpServlet {
     GetAllFiles getallfile = new GetAllFiles();
 
     List<File> allfiles = getallfile.retrieveAllFiles(service);
-
+    
+    
+//    log.info(allfiles.get(0).getDescription());
+//    log.info(allfiles.get(0).getFullFileExtension());
+//    log.info(allfiles.get(0).getWebViewLink());
+//    log.info(allfiles.get(0).getContentHints().toPrettyString());
+    for (com.google.api.services.drive.model.File file : allfiles) {
+    
+    log.info(file.toPrettyString());
+    }
+   
     JsonFactory factory = new JacksonFactory();
 
     StringWriter sw = new StringWriter();
@@ -115,8 +125,10 @@ public class PlusSampleServlet extends HttpServlet {
       jGenerator.writeString(file.getId());
       jGenerator.writeFieldName("name");
       jGenerator.writeString(file.getName());
+      jGenerator.writeFieldName("mimetype");
+      jGenerator.writeString(file.getMimeType());    
       jGenerator.writeEndObject();
-
+      
     }
 
     jGenerator.writeEndArray();
@@ -166,7 +178,10 @@ public class PlusSampleServlet extends HttpServlet {
         "<div class=\"search-container\"><div class=\"ui-widget\"><input type=\"text\" size=\"90%\" id=\"search\" name=\"search\" class=\"search\" /> &nbsp;&nbsp;<a class=\"btn btn-primary btn-lg\" onclick=\"getPreviewPageAsync('/previewfile');\" role=\"button\">Preview file</a></div>");
     
     respWriter.println("<h4>fiel ID <span id = \"id\" class=\"label label-danger\">id</span></h4>");
-    respWriter.println("<h4>NAME<span id = \"name\" class=\"label label-warning\">name</span></h4>");  
+    respWriter.println("<h4>NAME<span id = \"name\" class=\"label label-warning\">name</span></h4>");
+    respWriter.println("<h4>MimeType<span id = \"mimetype\" class=\"label label-default\">mimetype</span></h4>");
+    
+    respWriter.println("<div id=\"showimage\"></div>");
     
     respWriter.println("</div>");
     respWriter.println("</div>");

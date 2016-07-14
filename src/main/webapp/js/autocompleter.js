@@ -36,6 +36,13 @@ function getPreviewPageAsync(url) {
 		        
 		        document.getElementById("id").innerHTML = myFile.id;
 		        document.getElementById("name").innerHTML = myFile.name;
+		        document.getElementById("mimetype").innerHTML = myFile.mimetype;
+		        
+		        if (myFile.mimetype ==="image/jpeg") {
+		        	
+		        	 document.getElementById("showimage").innerHTML = "<img src='https://docs.google.com/uc?id="+myFile.id+"'  class='img-rounded' style='width:304px;height:228px;'>"; 
+		        	
+		        }
 		        
 		    
 		}

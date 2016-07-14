@@ -66,7 +66,6 @@ public class PreviewFile extends HttpServlet {
     List<DfileObj> filesObj =
         Arrays.asList(mapper.readValue(allfilesjson.toString(), DfileObj[].class));
 
-
     DfileObj dfileObjOut = new DfileObj();
 
     for (DfileObj dfileObj : filesObj) {
@@ -75,10 +74,9 @@ public class PreviewFile extends HttpServlet {
 
         dfileObjOut.setId(dfileObj.getId());
         dfileObjOut.setName(dfileObj.getName());
-
+        dfileObjOut.setMimetype(dfileObj.getMimetype());
 
       }
-
 
     }
 
@@ -91,6 +89,8 @@ public class PreviewFile extends HttpServlet {
     jGenerator.writeString(dfileObjOut.getId());
     jGenerator.writeFieldName("name");
     jGenerator.writeString(dfileObjOut.getName());
+    jGenerator.writeFieldName("mimetype");
+    jGenerator.writeString(dfileObjOut.getMimetype());    
 
     jGenerator.writeEndObject();
     jGenerator.close();
