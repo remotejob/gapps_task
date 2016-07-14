@@ -14,18 +14,14 @@
 
 package com.google.api.services.samples.plus;
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.appengine.repackaged.org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -47,11 +43,14 @@ public class PreviewFile extends HttpServlet {
       throws IOException, ServletException {
     final Logger log = Logger.getLogger(PreviewFile.class.getName());
 
+    String jsonout;
+    String allfilesjson;
+
     HttpSession session = req.getSession();
 
+    String APPLICATION_NAME = (String) session.getAttribute("application_name");
     String clid = (String) session.getAttribute("clid");
     String clidimg = (String) session.getAttribute("clidimg");
-    
 
     String dfilename = req.getHeader("X-Dfilename");
 
@@ -59,57 +58,31 @@ public class PreviewFile extends HttpServlet {
 
     MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
-    String allfilesjson = (String) memcache.get(clid);
+    if (!memcache.contains(clid)) {
+
+      log.warning("memchache not exist");
+
+      Credential credential = Utils.getCredentil(req, resp);
+      allfilesjson = new GetAllFiles().filesinJSON(APPLICATION_NAME, credential, clid);
+      jsonout = new GetAllFiles().DetailsSelectedFileInJson(factory, clid, clidimg, allfilesjson,
+          dfilename);
+      memcache.put(clid,allfilesjson);
 
 
-    ObjectMapper mapper = new ObjectMapper();
+    } else {
 
 
-    List<DfileObj> filesObj =
-        Arrays.asList(mapper.readValue(allfilesjson.toString(), DfileObj[].class));
+      allfilesjson = (String) memcache.get(clid);
 
-    String allfilesquant =""+filesObj.size();
-    
-    
-    DfileObj dfileObjOut = new DfileObj();
-
-    for (DfileObj dfileObj : filesObj) {
-
-      if (dfileObj.getName().equals(dfilename)) {
-
-        dfileObjOut.setId(dfileObj.getId());
-        dfileObjOut.setName(dfileObj.getName());
-        dfileObjOut.setMimetype(dfileObj.getMimetype());
-
-      }
+      jsonout = new GetAllFiles().DetailsSelectedFileInJson(factory, clid, clidimg, allfilesjson,
+          dfilename);
 
     }
-
-    StringWriter sw = new StringWriter();
-    JsonGenerator jGenerator = factory.createJsonGenerator(sw);
-
-    jGenerator.writeStartObject();
-
-    jGenerator.writeFieldName("clid");
-    jGenerator.writeString(clid);
-    jGenerator.writeFieldName("clidimg");
-    jGenerator.writeString(clidimg);
-    jGenerator.writeFieldName("allfilesquant");
-    jGenerator.writeString(allfilesquant);
-    jGenerator.writeFieldName("id");
-    jGenerator.writeString(dfileObjOut.getId());
-    jGenerator.writeFieldName("name");
-    jGenerator.writeString(dfileObjOut.getName());
-    jGenerator.writeFieldName("mimetype");
-    jGenerator.writeString(dfileObjOut.getMimetype());    
-
-    jGenerator.writeEndObject();
-    jGenerator.close();
     resp.setContentType("application/json");
     resp.setStatus(200);
     Writer writer = resp.getWriter();
 
-    writer.write(sw.toString());
+    writer.write(jsonout);
 
     writer.close();
 

@@ -22,8 +22,6 @@ function getPreviewPageAsync(url) {
 	
 	var dfilename = document.getElementById("search").value;
 	
-	console.log(dfilename)
-	
 	var xhr = new XMLHttpRequest();
 		
 	xhr.open('GET', url);

@@ -14,13 +14,24 @@
 
 package com.google.api.services.samples.plus;
 
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.JsonGenerator;
+import com.google.api.client.json.JsonParser;
+import com.google.api.client.json.JsonToken;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.Drive.Files;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.google.appengine.repackaged.org.codehaus.jackson.JsonParseException;
+import com.google.appengine.repackaged.org.codehaus.jackson.map.JsonMappingException;
+import com.google.appengine.repackaged.org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -48,5 +59,144 @@ public class GetAllFiles {
 
     return result;
   }
+  
+  public String filesinJSON(String APPLICATION_NAME,Credential credential,String clid) throws IOException {
+ 
+    Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
+        .setApplicationName(APPLICATION_NAME).build();
 
+    GetAllFiles getallfile = new GetAllFiles();
+
+    List<File> allfiles = getallfile.retrieveAllFiles(service);
+
+    JsonFactory factory = new JacksonFactory();
+
+    StringWriter sw = new StringWriter();
+
+    JsonGenerator jGenerator = factory.createJsonGenerator(sw);
+
+    jGenerator.writeStartArray();
+
+    for (com.google.api.services.drive.model.File file : allfiles) {
+
+      jGenerator.writeStartObject();
+      jGenerator.writeFieldName("id");
+      jGenerator.writeString(file.getId());
+      jGenerator.writeFieldName("name");
+      jGenerator.writeString(file.getName());
+      jGenerator.writeFieldName("mimetype");
+      jGenerator.writeString(file.getMimeType());
+      jGenerator.writeEndObject();
+
+    }
+
+    jGenerator.writeEndArray();
+    jGenerator.close();
+    
+    return sw.toString();    
+    
+  }
+  
+  public String selectedfileinJSON(JsonFactory factory,String allfilesjson,String term) throws IOException {
+   
+    JsonParser jParser = factory.createJsonParser(allfilesjson);
+
+   
+    List<String> filenamesout = new ArrayList<String>();
+    
+    while (jParser.nextToken() != JsonToken.END_ARRAY) {
+
+      String fieldname = jParser.getCurrentName();
+
+      if ("name".equals(fieldname)) {
+
+        jParser.nextToken();
+
+        String filename = jParser.getText();
+
+        if (filename.toLowerCase().contains(term.toLowerCase())) {
+
+          filenamesout.add(filename);
+
+        }
+
+      }
+
+    }
+
+    jParser.close();
+
+    StringWriter sw = new StringWriter();
+    JsonGenerator jGenerator = factory.createJsonGenerator(sw);
+
+    jGenerator.writeStartArray();
+    if (filenamesout.size() > 0) {
+      for (String filename : filenamesout) {
+
+        jGenerator.writeString(filename);
+
+      }
+
+    }
+    jGenerator.writeEndArray();
+    jGenerator.close();
+    
+    return sw.toString();
+          
+  }
+
+  public String DetailsSelectedFileInJson(JsonFactory factory,String clid,String clidimg,String allfilesjson,String selectedfilename) throws JsonParseException, JsonMappingException, IOException{
+ 
+    ObjectMapper mapper = new ObjectMapper();
+
+
+    List<DfileObj> filesObj =
+        Arrays.asList(mapper.readValue(allfilesjson.toString(), DfileObj[].class));
+
+    String allfilesquant =""+filesObj.size();
+    
+    
+    DfileObj dfileObjOut = new DfileObj();
+
+    for (DfileObj dfileObj : filesObj) {
+
+      if (dfileObj.getName().equals(selectedfilename)) {
+
+        dfileObjOut.setId(dfileObj.getId());
+        dfileObjOut.setName(dfileObj.getName());
+        dfileObjOut.setMimetype(dfileObj.getMimetype());
+
+      }
+
+    }
+
+    StringWriter sw = new StringWriter();
+    JsonGenerator jGenerator = factory.createJsonGenerator(sw);
+
+    jGenerator.writeStartObject();
+
+    jGenerator.writeFieldName("clid");
+    jGenerator.writeString(clid);
+    jGenerator.writeFieldName("clidimg");
+    jGenerator.writeString(clidimg);
+    jGenerator.writeFieldName("allfilesquant");
+    jGenerator.writeString(allfilesquant);
+    jGenerator.writeFieldName("id");
+    jGenerator.writeString(dfileObjOut.getId());
+    jGenerator.writeFieldName("name");
+    jGenerator.writeString(dfileObjOut.getName());
+    jGenerator.writeFieldName("mimetype");
+    jGenerator.writeString(dfileObjOut.getMimetype());    
+
+    jGenerator.writeEndObject();
+    jGenerator.close();
+    
+    
+    return sw.toString();
+    
+   
+  }
+  
+   
+  
 }

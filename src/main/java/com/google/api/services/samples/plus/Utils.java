@@ -14,6 +14,7 @@
 
 package com.google.api.services.samples.plus;
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.appengine.auth.oauth2.AppEngineCredentialStore;
 import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 class Utils {
 
@@ -73,4 +75,21 @@ class Utils {
     User user = userService.getCurrentUser();
     return user.getUserId();
   }
+  
+  static Credential getCredentil(HttpServletRequest req,HttpServletResponse resp) throws IOException {
+    
+    GoogleAuthorizationCodeFlow authFlow = Utils.initializeFlow();
+
+    Credential credential = authFlow.loadCredential(Utils.getUserId(req));
+    if (credential == null) {
+      // If we don't have a token in store, redirect to authorization screen.
+      resp.sendRedirect(
+          authFlow.newAuthorizationUrl().setRedirectUri(Utils.getRedirectUri(req)).build());
+      return null;
+    }
+       
+    return credential;
+        
+  }
+  
 }

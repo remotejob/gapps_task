@@ -14,19 +14,14 @@
 
 package com.google.api.services.samples.plus;
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.JsonGenerator;
-import com.google.api.client.json.JsonParser;
-import com.google.api.client.json.JsonToken;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
@@ -35,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Sample Google  servlet .
+ * Sample Google servlet .
  *
  * @author Alex Mazurov
  */
@@ -46,72 +41,57 @@ public class PlusBasicServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    
+
     final Logger log = Logger.getLogger(PlusBasicServlet.class.getName());
+    
+    String jsonout;
+    String allfilesjson;
 
     String term = req.getParameter("term");
-
+        
     HttpSession session = req.getSession();
 
     String clid = (String) session.getAttribute("clid");
+    String APPLICATION_NAME = (String) session.getAttribute("application_name");
 
-      List<String> filenamesout = new ArrayList<String>();
+    JsonFactory factory = new JacksonFactory();
 
-      JsonFactory factory = new JacksonFactory();
+    MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
-      MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-      
-      String allfilesjson = (String) memcache.get(clid);
 
-      
-      JsonParser jParser=factory.createJsonParser(allfilesjson);
-      
-      while (jParser.nextToken() != JsonToken.END_ARRAY) {
-        
-        String fieldname = jParser.getCurrentName();
-        
-        if ("name".equals(fieldname)) {          
+    if (null == session.getAttribute("clid")) {
 
-          jParser.nextToken(); 
-          
-          String filename = jParser.getText();
-          
-          if (filename.toLowerCase().contains(term.toLowerCase())) {
+      log.warning("clid null???? ");
 
-            filenamesout.add(filename);
+    } else {
 
-          }
-                  
-          
-        }
+
+      if (!memcache.contains(clid)) {
+
+        log.info("memchache not exist");
                 
+        Credential credential = Utils.getCredentil(req, resp);
+        allfilesjson= new GetAllFiles().filesinJSON(APPLICATION_NAME, credential, clid);
+        jsonout = new GetAllFiles().selectedfileinJSON(factory, allfilesjson, term);
         
-      }
-      
-      jParser.close();
-            
-      
-      StringWriter sw = new StringWriter();
-      JsonGenerator jGenerator = factory.createJsonGenerator(sw);
-      
-      jGenerator.writeStartArray();
-      if (filenamesout.size() > 0) {
-        for (String filename : filenamesout) {
+        memcache.put(clid,allfilesjson);
+        
 
-          jGenerator.writeString(filename);
-
-        }
+      } else {
+                
+        allfilesjson = (String) memcache.get(clid);
+        jsonout = new GetAllFiles().selectedfileinJSON(factory, allfilesjson, term);
 
       }
-      jGenerator.writeEndArray();
-      jGenerator.close();
       resp.setContentType("application/json");
       resp.setStatus(200);
+
       Writer writer = resp.getWriter();
-
-      writer.write(sw.toString());
-
+      writer.write(jsonout);
       writer.close();
+      
+      
+    }
 
   }
 
