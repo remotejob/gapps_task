@@ -29,14 +29,9 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.cache.Cache;
-import javax.cache.CacheException;
-import javax.cache.CacheFactory;
-import javax.cache.CacheManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,85 +58,84 @@ public class PlusSampleServlet extends HttpServlet {
     final Logger log = Logger.getLogger(PlusSampleServlet.class.getName());
 
     HttpSession session = req.getSession();
+    MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
-    Cache cache;
-    try {
-      CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
-      cache = cacheFactory.createCache(Collections.emptyMap());
-    } catch (CacheException e) {
-      log.warning(e.getMessage());
-
-    }
-
+    String clid;
+    Credential credential = null;
+    Person profile = null;
+    List<File> allfiles = null;
+    
     GoogleAuthorizationCodeFlow authFlow = Utils.initializeFlow();
 
     log.info(authFlow.getClientId());
-    Credential credential = authFlow.loadCredential(Utils.getUserId(req));
+    credential = authFlow.loadCredential(Utils.getUserId(req));
     if (credential == null) {
       // If we don't have a token in store, redirect to authorization screen.
       resp.sendRedirect(
           authFlow.newAuthorizationUrl().setRedirectUri(Utils.getRedirectUri(req)).build());
       return;
     }
+    
 
-    // If we do have stored credentials, build the Plus object using them.
-    Plus plus = new Plus.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
-        .setApplicationName(APPLICATION_NAME).build();
-    Person profile = plus.people().get("me").execute();
+    if (null == session.getAttribute("clid")) {
 
-    String clid = profile.getId();
+      log.info("clid null");
 
-    session.setAttribute("clid", clid);
+      // log.info("credential",credential.);
+      // If we do have stored credentials, build the Plus object using them.
+      Plus plus = new Plus.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
+          .setApplicationName(APPLICATION_NAME).build();
+      profile = plus.people().get("me").execute();
 
-    Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
-        .setApplicationName(APPLICATION_NAME).build();
+      clid = profile.getId();
 
-    GetAllFiles getallfile = new GetAllFiles();
+      session.setAttribute("clid", clid);
 
-    List<File> allfiles = getallfile.retrieveAllFiles(service);
+      if (!memcache.contains(clid)) {
+        
+        Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
+            .setApplicationName(APPLICATION_NAME).build();
+
+        GetAllFiles getallfile = new GetAllFiles();
+
+        allfiles = getallfile.retrieveAllFiles(service);
+
+        JsonFactory factory = new JacksonFactory();
+
+        StringWriter sw = new StringWriter();
+
+        JsonGenerator jGenerator = factory.createJsonGenerator(sw);
+
+        jGenerator.writeStartArray();
+
+        for (com.google.api.services.drive.model.File file : allfiles) {
+
+          jGenerator.writeStartObject();
+          jGenerator.writeFieldName("id");
+          jGenerator.writeString(file.getId());
+          jGenerator.writeFieldName("name");
+          jGenerator.writeString(file.getName());
+          jGenerator.writeFieldName("mimetype");
+          jGenerator.writeString(file.getMimeType());
+          jGenerator.writeEndObject();
+
+        }
+
+        jGenerator.writeEndArray();
+        jGenerator.close();
+
+        log.info("memcache ! not exist");
+        memcache.put(clid, sw.toString());
+      }
     
     
-//    log.info(allfiles.get(0).getDescription());
-//    log.info(allfiles.get(0).getFullFileExtension());
-//    log.info(allfiles.get(0).getWebViewLink());
-//    log.info(allfiles.get(0).getContentHints().toPrettyString());
-    for (com.google.api.services.drive.model.File file : allfiles) {
-    
-    log.info(file.toPrettyString());
-    }
-   
-    JsonFactory factory = new JacksonFactory();
+    } else {
 
-    StringWriter sw = new StringWriter();
+      clid = (String) session.getAttribute("clid");
 
-    JsonGenerator jGenerator = factory.createJsonGenerator(sw);
 
-    jGenerator.writeStartArray();
-
-    for (com.google.api.services.drive.model.File file : allfiles) {
-
-      jGenerator.writeStartObject();
-      jGenerator.writeFieldName("id");
-      jGenerator.writeString(file.getId());
-      jGenerator.writeFieldName("name");
-      jGenerator.writeString(file.getName());
-      jGenerator.writeFieldName("mimetype");
-      jGenerator.writeString(file.getMimeType());    
-      jGenerator.writeEndObject();
-      
     }
 
-    jGenerator.writeEndArray();
-    jGenerator.close();
-
-    MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-
-
-    if (!memcache.contains(clid)) {
-
-      log.info("memcache ! not exist");
-      memcache.put(clid, sw.toString());
-    }
 
     PrintWriter respWriter = resp.getWriter();
     resp.setStatus(200);
@@ -162,27 +156,30 @@ public class PlusSampleServlet extends HttpServlet {
     respWriter.println("</head>");
 
     respWriter.println("<div class=\"container\">");
-    respWriter.println("<img src=\"/img/blog-gcp-logo.png\" alt=\"Appengine\" style=\"height:20%;\">");
+    respWriter
+        .println("<img src=\"/img/blog-gcp-logo.png\" alt=\"Appengine\" style=\"height:20%;\">");
     respWriter.println("<div class=\"well\">");
 
-    respWriter.println("<img src='" + profile.getImage().getUrl() + "'>");
-    respWriter
-        .println("Uniq Client ID (from +PLUS api) can be used as Id for DB <div class='redtitle'>"
-            + profile.getId() + "</div> we will keep it in <div class='redtitle'>session</div>");
+//    respWriter.println("<img src='" + profile.getImage().getUrl() + "'>");
+//    respWriter
+//        .println("Uniq Client ID (from +PLUS api) can be used as Id for DB <div class='redtitle'>"
+//            + profile.getId() + "</div> we will keep it in <div class='redtitle'>session</div>");
     respWriter.println("</div>");
     respWriter.println("<div class=\"jumbotron\" >");
-    respWriter.println("Search from " + allfiles.size()
+    respWriter.println("Search from "
         + " files (keeped in <div class='redtitle'>memcache</div> for speed improvement)");
 
     respWriter.println(
         "<div class=\"search-container\"><div class=\"ui-widget\"><input type=\"text\" size=\"90%\" id=\"search\" name=\"search\" class=\"search\" /> &nbsp;&nbsp;<a class=\"btn btn-primary btn-lg\" onclick=\"getPreviewPageAsync('/previewfile');\" role=\"button\">Preview file</a></div>");
-    
+
     respWriter.println("<h4>fiel ID <span id = \"id\" class=\"label label-danger\">id</span></h4>");
-    respWriter.println("<h4>NAME<span id = \"name\" class=\"label label-warning\">name</span></h4>");
-    respWriter.println("<h4>MimeType<span id = \"mimetype\" class=\"label label-default\">mimetype</span></h4>");
-    
+    respWriter
+        .println("<h4>NAME<span id = \"name\" class=\"label label-warning\">name</span></h4>");
+    respWriter.println(
+        "<h4>MimeType<span id = \"mimetype\" class=\"label label-default\">mimetype</span></h4>");
+
     respWriter.println("<div id=\"showimage\"></div>");
-    
+
     respWriter.println("</div>");
     respWriter.println("</div>");
     respWriter.close();
