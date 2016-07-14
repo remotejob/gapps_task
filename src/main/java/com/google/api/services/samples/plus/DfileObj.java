@@ -15,7 +15,7 @@
 package com.google.api.services.samples.plus;
 
 /**
- * @author juno@google.com (Your Name Here)
+ * @author Alex Mazurov
  *
  */
 

@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Sample Google servlet .
+ * Json service return selected file .
  *
  * @author Alex Mazurov
  */

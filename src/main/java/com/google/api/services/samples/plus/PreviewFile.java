@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * json service return Details for selected file
+ * 
  * @author Alex Mazurov
  *
  */
