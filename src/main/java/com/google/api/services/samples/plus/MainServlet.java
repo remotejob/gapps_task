@@ -32,11 +32,14 @@ import javax.servlet.http.HttpSession;
 
 
 /**
- * Sample Google+ servlet that loads user credentials and then shows their profile link.
+ * Mains servlet to load main page.
+ * on start and reload check 
  *
- * @author Alex Mazurov
+ * @author Alex Mazurov memcache contents as well CLIENT ID 
+ * 
+ * CLIENT ID taken from GOOGLE +PLUS account
  */
-public class PlusSampleServlet extends HttpServlet {
+public class MainServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1;
 
@@ -47,7 +50,7 @@ public class PlusSampleServlet extends HttpServlet {
   public void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws IOException, ServletException {
 
-    final Logger log = Logger.getLogger(PlusSampleServlet.class.getName());
+    final Logger log = Logger.getLogger(MainServlet.class.getName());
 
     HttpSession session = req.getSession();
     

@@ -30,11 +30,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Json service return selected file .
+ * Json service return json string selected by  partial file names (or full name) files.
  *
  * @author Alex Mazurov
+ * @see selectedfileinJSON
  */
-public class PlusBasicServlet extends HttpServlet {
+public class SeachController extends HttpServlet {
 
 
   private static final long serialVersionUID = 1;
@@ -42,7 +43,7 @@ public class PlusBasicServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-    final Logger log = Logger.getLogger(PlusBasicServlet.class.getName());
+    final Logger log = Logger.getLogger(SeachController.class.getName());
     
     String jsonout;
     String allfilesjson;

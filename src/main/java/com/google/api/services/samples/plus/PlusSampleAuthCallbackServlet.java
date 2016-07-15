@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * Sample servlet that exchanges the authorization code for user credentials and then redirects back
  * to the main servlet.
  *
- * @author Nick Miceli
+ * @author Alex Mazurov
  */
 public class PlusSampleAuthCallbackServlet extends HttpServlet {
 

@@ -38,6 +38,7 @@ import java.util.List;
  * @author juno@google.com (Your Name Here)
  *
  */
+
 public class GetAllFiles {
   
   public  List<File> retrieveAllFiles(Drive service) throws IOException {
@@ -97,6 +98,12 @@ public class GetAllFiles {
     
   }
   
+  /**
+   * 
+   *  @return return simple string array in json selecte by term param
+   *  @param patcial or full file name 
+   *
+   */
   public String selectedfileinJSON(JsonFactory factory,String allfilesjson,String term) throws IOException {
    
     JsonParser jParser = factory.createJsonParser(allfilesjson);

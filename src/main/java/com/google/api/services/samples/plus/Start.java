@@ -12,6 +12,9 @@ public class Start extends HttpServlet {
 
   /**
   * 
+  * Simple servlet it seen only ones used for Agreement page as example 
+  * 
+  * @author Alex Mazurov
   */
   private static final long serialVersionUID = 1L;
 
@@ -23,7 +26,7 @@ public class Start extends HttpServlet {
     out.print("<head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css\" integrity=\"sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7\" crossorigin=\"anonymous\"></head>");  
     out.print("<div class=\"container\">");
     out.print("<div class=\"well\">");
-    out.print("<h1>WELCOME TO GAPPS AGGREMENT PAGE</h1>");
+    out.print("<h1>WELCOME TO GAPPS AGREEMENT PAGE</h1>");
     out.print("<h2>Task related to eventual job aggrement</h2>");
     out.print("<a href=\"/\" class=\"btn btn-primary btn-lg\">I AGREE</a>");
     out.print("</div>");

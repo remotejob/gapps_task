@@ -16,12 +16,12 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     
     
   <servlet>
-    <servlet-name>PlusSampleServlet</servlet-name>
-    <servlet-class>com.google.api.services.samples.plus.PlusSampleServlet</servlet-class>
+    <servlet-name>MainServlet</servlet-name>
+    <servlet-class>com.google.api.services.samples.plus.MainServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>PlusSampleServlet</servlet-name>
-    <url-pattern>/plussampleservlet</url-pattern>
+    <servlet-name>MainServlet</servlet-name>
+    <url-pattern>/mainservlet</url-pattern>
   </servlet-mapping>
   
   <servlet>
@@ -42,12 +42,13 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-name>PlusSampleAuthCallbackServlet</servlet-name>
     <url-pattern>/oauth2callback</url-pattern>
   </servlet-mapping>
+ 
   <servlet>
-    <servlet-name>PlusBasicServlet</servlet-name>
-    <servlet-class>com.google.api.services.samples.plus.PlusBasicServlet</servlet-class>
+    <servlet-name>SeachController</servlet-name>
+    <servlet-class>com.google.api.services.samples.plus.SeachController</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>PlusBasicServlet</servlet-name>
+    <servlet-name>SeachController</servlet-name>
     <url-pattern>/searchcontroller</url-pattern>
   </servlet-mapping>
   <welcome-file-list>
