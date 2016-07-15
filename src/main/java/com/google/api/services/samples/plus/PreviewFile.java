@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Google Inc.
+ * Copyright (c) 2016 Gapps OY
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -31,10 +31,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * json service return Details for selected file
+ * json service return Details for selected file in JSON string
  * 
- * @author Alex Mazurov
- *
+ * 
+ *  @author Alex Mazurov
+ * 
+ *  @custom.param set by javascript in Servelt header
+ *  @custom.todo substitute by golang
  */
 public class PreviewFile extends HttpServlet {
 

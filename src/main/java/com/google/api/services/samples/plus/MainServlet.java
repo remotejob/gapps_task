@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Google Inc.
+ * Copyright (c) 2016 Gapps OY.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -33,11 +33,11 @@ import javax.servlet.http.HttpSession;
 
 /**
  * Mains servlet to load main page.
- * on start and reload check 
+ * on start and reload check  memcache contents as well CLIENT ID 
  *
- * @author Alex Mazurov memcache contents as well CLIENT ID 
+ * @author Alex Mazurov
+ * @custom.todo 1)Button to cleanUP 2)Check if search was null inform user what files not found 
  * 
- * CLIENT ID taken from GOOGLE +PLUS account
  */
 public class MainServlet extends HttpServlet {
 

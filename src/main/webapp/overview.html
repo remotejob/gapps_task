@@ -3,38 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <title>GAPPS_TEST project</title>
+
 </head>
 <body>
-It's overview of GAPPS_TEST project
+<h2>It's overview of GAPPS_TEST project</h2>
 
+======================================================</br>
+<p>That page locate on https://remotejob.github.io/gapps_task/<p>
+
+<p>Working link http://elite-name-224.appspot.com/ so it's Appengine container</p> 
+
+<p>github repository https://github.com/remotejob/gapps_task</p>
+
+<p>Documentation https://remotejob.github.io/gapps_task/</p>
 ======================================================
-That page locate on https://remotejob.github.io/gapps_task/
 
-Working link http://elite-name-224.appspot.com/ so it's Appengine container 
+<p>Scope only demonstrate skill in JAVA and knowledge basic AppEngine functionality.
+It's simple maven project under ECLIPSE(Neon Release 4.6.0) It use Google API (PLUS+ and DRIVE)</p>
 
-github repository https://github.com/remotejob/gapps_task
+<p>It's 99% JAVA project but for some UI improvement used JavaScript jQuery libs as well clean javascript code.</p>
 
-Documentation https://remotejob.github.io/gapps_task/
-======================================================
+<p>It search files from their Google Drive based on file names or partial file names. As well it's <b>JPEG files viewer</b> 
+so if you have .jpeg files on yours Drive it possible view image (only .jpeg!!!).</p>
 
-Scope only demonstrate skill in JAVA and knowledge basic AppEngine functionality.
-It's simple maven project under ECLIPSE(Neon Release 4.6.0) It use Google API (PLUS+ and DRIVE)
+<p>Basic Style created using "Twitter Bootstrap" package </p>
 
-It's 99% JAVA project but for some UI improvement used JavaScript jQuery libs as well clean javascript code.
+<h4>Main concern was <big>SPEED!!</big></h4>
 
-It search files from their Google Drive based on file names or partial file names. As well it's JPEG files viewer 
-so if you have .jpeg files on yours Drive it possible view.
+<p>So for speed improvement was used memchache but it's necessary take into consideration first start of appengine conteiner it's slow if it's not UP.</p>
 
+<p>For google like search interface used jQuery Autocomplete Widget</p>
 
-
-
-
-
-For google like search interface used jQuery Autocomplete Widget
-
-For working
+<p>For working:</p>
 
 Within "OAuth 2.0 Client ID", click on "Download JSON". Later on, after you check out the sample project, you will copy this downloaded file (e.g. ~/Downloads/client_secrets.json) to src/main/resources/client_secrets.json. If you skip this step, when trying to run the sample you will get a 400 INVALID_CLIENT error in the browser.
+
+ <ul>
+    <li><a
+      href="http://code.google.com/p/google-api-java-client/source/browse/plus-preview-appengine-sample/?repo=samples">Browse
+        Source</a>
+  </ul>
+
+  <h3>Register Your Application</h3>
+
+  <ul>
+    <li>Visit the <a href="https://cloud.google.com/console/start/api?id=plus">Google Cloud
+        console</a>.
+    </li>
+    <li>If necessary, sign in to your Google Account, select or create a project,
+        and agree to the terms of service.  Click Continue.</li>
+    <li>Select the "Web Application" platform, and click Register.</li>
+    <li>Within "OAuth 2.0 Client ID", click on "Download JSON". Later on, after you check
+        out the sample project, you will copy this downloaded file (e.g.
+        <code>~/Downloads/client_secrets.json</code>) to
+        <a href="src/main/resources/client_secrets.json">src/main/resources/client_secrets.json</a>.
+        If you skip this step, when trying to run the sample you will get a <code>400
+        INVALID_CLIENT</code> error in the browser.
+    </li>
+    <li>Within "OAuth 2.0 Client ID", in the "Redirect URI" field enter some
+        redirect URIs, for example
+        "https://yourappname.appspot.com/oauth2callback" and
+        "http://localhost:8888/oauth2callback".
+    </li>
+  </ul>
+
+  <h3>Checkout Instructions</h3>
+
+  <p>
+    <b>Prerequisites:</b> install <a href="http://java.com">Java 7</a>, <a
+      href="https://developers.google.com/appengine/downloads">Google App
+      Engine</a>, <a href="http://mercurial.selenic.com/">Mercurial</a>, and <a
+      href="http://maven.apache.org/download.html">Maven</a>. You may need to
+    set your
+    <code>JAVA_HOME</code>
+    .
+  </p>
 
 
 </body>

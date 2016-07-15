@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Google Inc.
+ * Copyright (c) 2016 Gapps OY
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -35,7 +35,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author juno@google.com (Your Name Here)
+ * @author Alex Mazurov
+ * @custom.todo keep control on  Google ..codehaus.. package 
  *
  */
 
@@ -60,6 +61,13 @@ public class GetAllFiles {
 
     return result;
   }
+  
+  /**
+   * 
+   *  @custom.return return json string contents all user files
+   *  @custom.param  String   clid  from +PLUS Google
+   *
+   */
   
   public String filesinJSON(String APPLICATION_NAME,Credential credential,String clid) throws IOException {
  
@@ -100,8 +108,8 @@ public class GetAllFiles {
   
   /**
    * 
-   *  @return return simple string array in json selecte by term param
-   *  @param patcial or full file name 
+   *  @custom.return return simple string array in json selecte by term param
+   *  @custom.param partial or full file name 
    *
    */
   public String selectedfileinJSON(JsonFactory factory,String allfilesjson,String term) throws IOException {
@@ -156,13 +164,11 @@ public class GetAllFiles {
  
     ObjectMapper mapper = new ObjectMapper();
 
-
     List<DfileObj> filesObj =
         Arrays.asList(mapper.readValue(allfilesjson.toString(), DfileObj[].class));
 
     String allfilesquant =""+filesObj.size();
-    
-    
+        
     DfileObj dfileObjOut = new DfileObj();
 
     for (DfileObj dfileObj : filesObj) {
@@ -200,10 +206,7 @@ public class GetAllFiles {
     
     
     return sw.toString();
-    
-   
+       
   }
-  
-   
-  
+    
 }

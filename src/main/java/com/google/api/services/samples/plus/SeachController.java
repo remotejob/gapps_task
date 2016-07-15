@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Google Inc.
+ * Copyright (c) 2016 Gapps OY
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -33,7 +33,10 @@ import javax.servlet.http.HttpSession;
  * Json service return json string selected by  partial file names (or full name) files.
  *
  * @author Alex Mazurov
- * @see selectedfileinJSON
+ * @custom.param term string from javascript search widget
+ * @custom.return JSON string
+ * @custom.todo Substitude by go
+ * 
  */
 public class SeachController extends HttpServlet {
 
@@ -90,8 +93,7 @@ public class SeachController extends HttpServlet {
       Writer writer = resp.getWriter();
       writer.write(jsonout);
       writer.close();
-      
-      
+            
     }
 
   }

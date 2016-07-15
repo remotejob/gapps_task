@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Google Inc.
+ * Copyright (c)2016 Gapps OY
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -58,6 +58,7 @@ class Utils {
     return clientSecrets;
   }
 
+  @SuppressWarnings("deprecation")
   static GoogleAuthorizationCodeFlow initializeFlow() throws IOException {
     return new GoogleAuthorizationCodeFlow.Builder(
         HTTP_TRANSPORT, JSON_FACTORY, getClientSecrets(), SCOPES).setCredentialStore(

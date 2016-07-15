@@ -1,5 +1,6 @@
 # gapps_task
 
+
 1. Scope only demonstrate skill in JAVA and knowledge basic AppEngine functionality.
 
 It's simple maven project under ECLIPSE(Neon Release 4.6.0)
@@ -8,9 +9,6 @@ It use Google API (PLUS+ and DRIVE)
 For google like search interface used jQuery 
 Autocomplete Widget
 
-
-
- 
 
 
 
