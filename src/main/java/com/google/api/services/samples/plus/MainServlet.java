@@ -32,8 +32,10 @@ import javax.servlet.http.HttpSession;
 
 
 /**
+ * 
+ * <img src="doc-files/opengapps.png" alt="OpenGapps" style="height:150px"/>
  * Mains servlet to load main page.
- * on start and reload check  memcache contents as well CLIENT ID 
+ * On start and reload ---> it check  memcache contents as well CLIENT ID 
  *
  * @author Alex Mazurov
  * @custom.todo 1)Button to cleanUP 2)Check if search was null inform user what files not found 
@@ -105,7 +107,6 @@ public class MainServlet extends HttpServlet {
             
     }
       
-
     PrintWriter respWriter = resp.getWriter();
     resp.setStatus(200);
     resp.setContentType("text/html");
