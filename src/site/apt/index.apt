@@ -1,0 +1,46 @@
+------
+ Introduction
+ ------
+ Alex Mazurov
+ ------
+ 20-07-2016
+ ------
+ 
+ 
+Gapps REST API
+ 
+  Some demo simple REST API by Java Servlets
+ 
+* Goals Overview
+ 
+  General information about the goals.
+ 
+  * https://remotejob.github.io/gapps_task short description for this plugin goal.
+ 
+* Usage
+ 
+  General instructions on how to use the Gapps REST API can be found on the https://github.com/remotejob/gapps_task/. Some more
+  specific use cases are described in the examples given below. Last but not least, users occasionally contribute
+  additional examples, tips or errata to the
+  https://github.com/remotejob/gapps_task/wiki project wiki page.
+ 
+  In case you still have questions regarding the plugin's usage, please have a look at the https://github.com/remotejob/gapps_task/issues and feel
+  free to contact the support dot mazurov.eu. The posts to the mailing list are archived and could
+  already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
+  the https://github.com/remotejob/gapps_task/wiki mail archive}}.
+ 
+  If you feel like the project is missing a feature or has a defect, you can fill a feature request or bug report in our
+  https://github.com/remotejob/gapps_task/issues issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
+  entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
+  Of course, patches are welcome, too. 
+ 
+* Examples
+ 
+  To provide you with better understanding of some usages of the Gapps REST API,
+  you can take a look into the following examples:
+ 
+  * http://elite-name-224.appspot.com/
+ 
+ 
+ 

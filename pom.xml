@@ -7,17 +7,17 @@
     <artifactId>google</artifactId>
     <version>5</version>
   </parent>
-  <groupId>com.google.apis-samples</groupId>
-  <artifactId>Gapps_task</artifactId>
+  <groupId>github.com.remotejob</groupId>
+  <artifactId>gapps_task</artifactId>
   <version>1.0</version>
-  <name>Gapps OY Task for eventual job position. Version</name>
+  <name>Gapps OY Task. Version ${version}</name>
   <packaging>war</packaging>
 
-  <url>http://code.google.com/p/google-api-java-client/</url>
+  <url>https://remotejob.github.io/gapps_task/</url>
 
   <issueManagement>
-    <system>code.google.com</system>
-    <url>http://code.google.com/p/google-api-java-client/issues/list</url>
+    <system>github.com</system>
+    <url>https://github.com/remotejob/gapps_task/issues</url>
   </issueManagement>
 
   <inceptionYear>2016</inceptionYear>
@@ -27,9 +27,11 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:hg:https://samples.google-api-java-client.googlecode.com/hg/</connection>
-    <developerConnection>scm:hg:https://samples.google-api-java-client.googlecode.com/hg/</developerConnection>
-    <url>http://code.google.com/p/google-api-java-client/source/browse/?repo=samples</url>
+    <connection>scm:git:https://github.com/remotejob/gapps_task.git</connection>
+    <developerConnection>scm:git:https://github.com/remotejob/gapps_task.git</developerConnection>
+    <url>https://remotejob.github.io/gapps_task/</url>
+ 
+    
   </scm>
   
   <properties>
@@ -45,14 +47,32 @@
       <id>remotejob</id>
       <name>Alex Mazurov</name>
       <email>support@mazurov.eu</email>
+      <url>http://mazurov.fi</url>
       <organization>Freelancer</organization>
       <organizationUrl>http://mazurov.fi</organizationUrl>
       <roles>
         <role>owner</role>
         <role>developer</role>
       </roles>
-      <timezone>-5</timezone>
+      <timezone>EEST</timezone>
     </developer>
+    <developer>
+      <id>remotejob2</id>
+      <name>Other Programmer</name>
+      <email>support@mazurov.fi</email>
+      <url>http://mazurov.eu</url>
+      <organization>Freelancer2</organization>
+      <organizationUrl>http://mazurov.eu</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>EEST</timezone>
+      <properties>
+        <picUrl>https://lh3.googleusercontent.com/-LgNyNxHk-qk/AAAAAAAAAAI/AAAAAAAAAAA/AOkcYIt0e5asoLIIhZTjDC8E8a7u6YnBFQ/mo/photo.jpg?sz=58</picUrl>
+      </properties>
+    </developer>
+    
   </developers>
 <profiles>
 
@@ -162,6 +182,49 @@
       </plugins>
     </pluginManagement>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+        <encoding>UTF-8</encoding>
+        <emptyComments>true</emptyComments>
+        <tagListOptions>
+            <tagClasses>
+                <tagClass>
+                    <displayName>Codes Review</displayName>
+                    <tags>
+                        <tag>
+                            <matchString>@custom.todo</matchString>
+                            <matchType>ignoreCase</matchType>
+                        </tag>
+                        <tag>
+                            <matchString>fixme</matchString>
+                            <matchType>ignoreCase</matchType>
+                        </tag>
+                    </tags>
+                </tagClass>
+
+                <tagClass>
+                    <displayName>Deprecated Codes</displayName>
+                    <tags>                        
+                        <tag>
+                            <matchString>deprecated</matchString>
+                            <matchType>ignoreCase</matchType>
+                        </tag>
+                    </tags>
+                </tagClass>
+            </tagClasses>
+        </tagListOptions>
+    </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  
+  
+  
   <dependencies>
     <dependency>
       <groupId>com.google.apis</groupId>
